@@ -34,6 +34,9 @@ class Filters extends BaseFilters
         'forcehttps'    => ForceHTTPS::class,
         'pagecache'     => PageCache::class,
         'performance'   => PerformanceMetrics::class,
+        'jwt'        => \App\Filters\JwtFilter::class,
+        'clubMember' => \App\Filters\ClubMemberFilter::class,
+        'clubRole'   => \App\Filters\ClubRoleFilter::class,
     ];
 
     /**

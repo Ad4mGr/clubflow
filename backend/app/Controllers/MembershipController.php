@@ -55,4 +55,10 @@ class MembershipController extends ResourceController {
         $model->update($membership['id'], ['role' => $newRole]);
         return $this->respond(['message' => 'Role updated']);
     }
+    // GET /api/me/clubs
+        public function myClubs() {
+            $userId = AuthUser::id();
+            $clubs  = (new MembershipModel())->getUserClubs($userId);
+            return $this->respond($clubs);
+}
 }

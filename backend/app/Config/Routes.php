@@ -3,12 +3,21 @@
 use CodeIgniter\Router\RouteCollection;
 
 /** @var RouteCollection $routes */
+$routes->options('(:any)', static function () {
+    return service('response')
+        ->setStatusCode(200)
+        ->setHeader('Access-Control-Allow-Origin', 'http://localhost:5173')
+        ->setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+        ->setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+});
 $routes->get('/', 'Home::index');
+
+service('auth')->routes($routes);
 // app/Config/Routes.php
 $routes->group('api', ['namespace' => 'App\Controllers'], function ($routes) {
 
     // Auth
-    $routes->post('register', 'AuthController::register');
+    $routes->post('signup', 'AuthController::signup');
     $routes->post('login',    'AuthController::login');
 
     // Public club routes

@@ -25,7 +25,11 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function signup(full_name: string, email: string, password: string): Promise<void> {
-    await api.post('/signup', { full_name, email, password })
+    const { data } = await api.post<{ token: string; user: User }>('/signup', { full_name, email, password })
+    token.value = data.token
+    user.value  = data.user
+    localStorage.setItem('token', data.token)
+    localStorage.setItem('user', JSON.stringify(data.user))
   }
 
   function logout(): void {

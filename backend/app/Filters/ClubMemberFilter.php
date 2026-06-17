@@ -2,6 +2,7 @@
 namespace App\Filters;
 
 use App\Models\MembershipModel;
+use App\Services\AuthUser;
 use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
@@ -9,7 +10,7 @@ use CodeIgniter\HTTP\ResponseInterface;
 class ClubMemberFilter implements FilterInterface {
     public function before(RequestInterface $request, $arguments = null) {
         $clubId = $request->uri->getSegment(3); // /api/clubs/{id}/...
-        $userId = $request->jwt_user_id;
+        $userId = AuthUser::id();
 
         $model      = new MembershipModel();
         $membership = $model->getMembership($userId, $clubId);

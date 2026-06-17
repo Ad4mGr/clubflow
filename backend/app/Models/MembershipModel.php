@@ -33,4 +33,24 @@ class MembershipModel extends Model {
     public function getMembership(int $userId, int $clubId): array|null {
         return $this->where('user_id', $userId)->where('club_id', $clubId)->first();
     }
+
+    // Get pending members of a club
+    public function getPendingMembers(int $clubId): array {
+        return $this->db->table('club_memberships m')
+            ->select('u.id, u.full_name, u.email, u.avatar_url, m.id as membership_id, m.role, m.status, m.joined_at')
+            ->join('users u', 'u.id = m.user_id')
+            ->where('m.club_id', $clubId)
+            ->where('m.status', 'pending')
+            ->get()->getResultArray();
+    }
+
+    // Get all members (including pending) for officer management
+    public function getAllMembers(int $clubId): array {
+        return $this->db->table('club_memberships m')
+            ->select('u.id, u.full_name, u.email, u.avatar_url, m.id as membership_id, m.role, m.status, m.joined_at')
+            ->join('users u', 'u.id = m.user_id')
+            ->where('m.club_id', $clubId)
+            ->orderBy("CASE m.status WHEN 'pending' THEN 0 ELSE 1 END, CASE m.role WHEN 'president' THEN 1 WHEN 'officer' THEN 2 ELSE 3 END")
+            ->get()->getResultArray();
+    }
 }

@@ -43,7 +43,8 @@ class MembershipController extends ResourceController {
     // PATCH /api/clubs/:clubId/members/:userId/role
     // requires jwt + clubMember + clubRole[president]
     public function updateRole($clubId = null, $userId = null) {
-        $newRole = $this->request->getVar('role');
+        $data   = $this->request->getJSON(true) ?? $this->request->getPost();
+        $newRole = $data['role'] ?? '';
         if (!in_array($newRole, ['member', 'officer'])) {
             return $this->fail('Invalid role', 422);
         }
@@ -56,9 +57,15 @@ class MembershipController extends ResourceController {
         return $this->respond(['message' => 'Role updated']);
     }
     // GET /api/me/clubs
-        public function myClubs() {
-            $userId = AuthUser::id();
-            $clubs  = (new MembershipModel())->getUserClubs($userId);
-            return $this->respond($clubs);
-}
+    public function myClubs() {
+        $userId = AuthUser::id();
+        $clubs  = (new MembershipModel())->getUserClubs($userId);
+        return $this->respond($clubs);
+    }
+
+    // GET /api/clubs/:clubId/members (officer+ — full list with pending)
+    public function members($clubId = null) {
+        $members = (new MembershipModel())->getAllMembers((int) $clubId);
+        return $this->respond($members);
+    }
 }
